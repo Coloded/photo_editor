@@ -8,6 +8,7 @@
 - Clipboard paste works in both single-photo and mosaic modes.
 - Mosaic mode accepts multiple clipboard image providers when available.
 - Added bilingual clipboard hints to the empty editor states.
+- Reworked the build script with dependency checks, compatible SDK discovery, actionable errors, archive verification, and optional confirmed installation.
 
 ### Русский
 
@@ -15,6 +16,7 @@
 - Вставка работает в режимах «Одно фото» и «Мозаика».
 - Режим мозаики принимает несколько изображений из буфера, когда они доступны.
 - В пустые состояния редактора добавлены подсказки на русском и английском языках.
+- Переработан скрипт сборки: добавлены проверка зависимостей, поиск совместимого SDK, понятные ошибки, проверка архива и установка только после подтверждения.
 
 ## 1.1 — 2026-08-19
 

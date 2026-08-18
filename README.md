@@ -93,7 +93,7 @@ The interface supports Russian and English. Use **Language / Язык** in the m
 
 ## Build from source
 
-The repository uses Swift Package Manager and Apple Command Line Tools.
+The repository uses Swift Package Manager and Apple Command Line Tools. The build script performs a preflight check, finds a compatible macOS SDK, validates the ARM64 executable and ad-hoc signature, and reports missing components with installation instructions. If Command Line Tools are missing, an interactive run offers to open Apple's system installer.
 
 ```bash
 git clone git@github.com:Coloded/photo_editor.git
@@ -103,7 +103,20 @@ cd photo_editor
 
 The release app is created at `dist/Photo_Editor.app`.
 
-The build script compiles an ARM64 release, creates the macOS bundle, adds the icon and `Info.plist`, verifies the architecture, and applies an ad-hoc signature.
+Optional commands:
+
+```bash
+# Build and verify a ZIP archive
+./scripts/build-app.sh --archive
+
+# Build and ask before installing into /Applications
+./scripts/build-app.sh --install
+
+# Show all options
+./scripts/build-app.sh --help
+```
+
+The script never installs developer components silently. When a required Apple component cannot be installed automatically, it names the missing component and explains what the user needs to install.
 
 ## Privacy
 
@@ -181,6 +194,8 @@ Photo_Editor — лёгкое нативное приложение для macOS
 
 ## Сборка из исходного кода
 
+Для сборки используются Swift Package Manager и Apple Command Line Tools. Скрипт предварительно проверяет окружение, находит совместимый macOS SDK, проверяет ARM64-файл и локальную подпись. Если чего-то не хватает, он сообщает название компонента и инструкцию по установке. При отсутствии Command Line Tools интерактивный запуск предложит открыть системный установщик Apple.
+
 ```bash
 git clone git@github.com:Coloded/photo_editor.git
 cd photo_editor
@@ -189,7 +204,20 @@ cd photo_editor
 
 Готовое приложение появится в `dist/Photo_Editor.app`.
 
-Скрипт создаёт release-сборку ARM64, формирует пакет macOS, добавляет иконку и `Info.plist`, проверяет архитектуру и устанавливает локальную ad-hoc подпись.
+Дополнительные команды:
+
+```bash
+# Собрать и проверить ZIP-архив
+./scripts/build-app.sh --archive
+
+# Собрать и запросить подтверждение установки в /Applications
+./scripts/build-app.sh --install
+
+# Показать справку
+./scripts/build-app.sh --help
+```
+
+Скрипт никогда не устанавливает компоненты разработчика скрытно. Если автоматическая установка невозможна, он пишет, чего именно не хватает и что пользователь должен установить.
 
 ## Конфиденциальность
 
