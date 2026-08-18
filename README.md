@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-1.1-0A84FF">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.2-0A84FF">
   <img alt="Swift" src="https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white">
   <img alt="macOS" src="https://img.shields.io/badge/macOS-13%2B-000000?logo=apple&logoColor=white">
   <img alt="Architecture" src="https://img.shields.io/badge/architecture-arm64-34C759">
@@ -18,7 +18,7 @@
 
 <p align="center">
   <a href="#english">English</a> · <a href="#русский">Русский</a> ·
-  <a href="Releases/Photo_Editor-1.1-macOS-arm64.zip">Download / Скачать</a>
+  <a href="Releases/Photo_Editor-1.2-macOS-arm64.zip">Download / Скачать</a>
 </p>
 
 ---
@@ -29,7 +29,7 @@ Photo_Editor is a lightweight native macOS app for resizing photos to exact prin
 
 ## Download and installation
 
-1. Download [Photo_Editor 1.1 for Apple Silicon](Releases/Photo_Editor-1.1-macOS-arm64.zip).
+1. Download [Photo_Editor 1.2 for Apple Silicon](Releases/Photo_Editor-1.2-macOS-arm64.zip).
 2. Extract the ZIP archive.
 3. Move `Photo_Editor.app` to `/Applications`.
 4. On the first launch, right-click the app and choose **Open** if macOS displays an unidentified-developer warning.
@@ -45,6 +45,7 @@ Photo_Editor is a lightweight native macOS app for resizing photos to exact prin
 ## Single photo mode
 
 - Drag and drop from Finder or Apple Photos.
+- Paste an image from the clipboard with **Command–V** or **Edit → Paste**.
 - Open JPG, PNG, HEIC, TIFF, BMP, GIF, and other formats supported by ImageIO.
 - Enter exact print size in millimeters or centimeters.
 - Use standard document, photo, and ISO paper presets.
@@ -59,6 +60,7 @@ Photo_Editor is a lightweight native macOS app for resizing photos to exact prin
 ## Mosaic mode
 
 - Import multiple photos at once, including drag and drop from Apple Photos.
+- Paste one or several clipboard images with **Command–V**.
 - A0–A6 paper sizes with portrait and landscape orientations.
 - Even grid and free-layout modes.
 - Automatic arrangement without cropping the original images.
@@ -115,7 +117,7 @@ Photo_Editor — лёгкое нативное приложение для macOS
 
 ## Скачивание и установка
 
-1. Скачайте [Photo_Editor 1.1 для Apple Silicon](Releases/Photo_Editor-1.1-macOS-arm64.zip).
+1. Скачайте [Photo_Editor 1.2 для Apple Silicon](Releases/Photo_Editor-1.2-macOS-arm64.zip).
 2. Распакуйте ZIP-архив.
 3. Переместите `Photo_Editor.app` в папку `/Applications` («Программы»).
 4. При первом запуске нажмите на приложение правой кнопкой мыши и выберите **Открыть**, если macOS покажет предупреждение о неизвестном разработчике.
@@ -131,6 +133,7 @@ Photo_Editor — лёгкое нативное приложение для macOS
 ## Режим «Одно фото»
 
 - Перетаскивание изображений из Finder и приложения Apple «Фото».
+- Вставка изображения из буфера обмена через **Command–V** или **Правка → Вставить**.
 - Открытие JPG, PNG, HEIC, TIFF, BMP, GIF и других форматов ImageIO.
 - Точные размеры печати в миллиметрах и сантиметрах.
 - Стандартные размеры документов, фотографий и листов ISO.
@@ -145,6 +148,7 @@ Photo_Editor — лёгкое нативное приложение для macOS
 ## Режим «Мозаика»
 
 - Загрузка сразу нескольких фотографий, включая drag-and-drop из Apple «Фото».
+- Вставка одной или нескольких фотографий из буфера обмена через **Command–V**.
 - Форматы листов A0–A6, книжная и альбомная ориентации.
 - Ровная сетка и свободная раскладка.
 - Автоматическая расстановка без обрезки исходных фотографий.

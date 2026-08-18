@@ -251,6 +251,19 @@ final class EditorModel: ObservableObject {
         installImage(from: source, displayURL: URL(fileURLWithPath: suggestedName))
     }
 
+    func loadPastedImage(data: Data, suggestedName: String) {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
+            statusMessage = localized(
+                "Буфер обмена не содержит поддерживаемого изображения",
+                "The clipboard does not contain a supported image"
+            )
+            NSSound.beep()
+            return
+        }
+        installImage(from: source, displayURL: URL(fileURLWithPath: suggestedName))
+        statusMessage = localized("Вставлено из буфера обмена", "Pasted from clipboard")
+    }
+
     private func installImage(from source: CGImageSource, displayURL: URL) {
         guard let cgImage = CGImageSourceCreateImageAtIndex(
                 source,

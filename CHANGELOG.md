@@ -1,5 +1,21 @@
 # Changelog / История изменений
 
+## 1.2 — 2026-08-19
+
+### English
+
+- Added image paste from the macOS clipboard with Command–V and Edit → Paste.
+- Clipboard paste works in both single-photo and mosaic modes.
+- Mosaic mode accepts multiple clipboard image providers when available.
+- Added bilingual clipboard hints to the empty editor states.
+
+### Русский
+
+- Добавлена вставка изображений из буфера обмена macOS через Command–V и «Правка → Вставить».
+- Вставка работает в режимах «Одно фото» и «Мозаика».
+- Режим мозаики принимает несколько изображений из буфера, когда они доступны.
+- В пустые состояния редактора добавлены подсказки на русском и английском языках.
+
 ## 1.1 — 2026-08-19
 
 ### English

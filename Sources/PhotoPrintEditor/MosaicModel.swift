@@ -187,6 +187,30 @@ final class MosaicModel: ObservableObject {
             ": \(items.count)"
     }
 
+    func addPastedImage(data: Data, suggestedName: String) {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let loaded = loadOrientedImage(
+                from: source,
+                displayURL: URL(fileURLWithPath: suggestedName)
+              ) else {
+            statusMessage = localized(
+                "Буфер обмена не содержит поддерживаемого изображения",
+                "The clipboard does not contain a supported image"
+            )
+            NSSound.beep()
+            return
+        }
+        items.append(MosaicItem(
+            sourceURL: URL(fileURLWithPath: suggestedName),
+            image: loaded.nsImage,
+            cgImage: loaded.cgImage,
+            frameMM: CGRect(x: marginMM, y: marginMM, width: 40, height: 40)
+        ))
+        arrangeGrid()
+        statusMessage = localized("Вставлено из буфера обмена. Всего", "Pasted from clipboard. Total") +
+            ": \(items.count)"
+    }
+
     func removeSelected() {
         guard let selectedItemID else { return }
         items.removeAll { $0.id == selectedItemID }

@@ -34,7 +34,10 @@ struct MosaicView: View {
                                 .foregroundStyle(Color.accentColor)
                             Text(settings.text("Перетащите несколько фотографий", "Drop multiple photos"))
                                 .font(.title3.weight(.semibold))
-                            Text(settings.text("Редактор автоматически разместит их на листе", "The editor will arrange them on the sheet"))
+                            Text(settings.text(
+                                "Перетащите, выберите или вставьте фотографии через ⌘V",
+                                "Drop, choose, or paste photos with ⌘V"
+                            ))
                                 .foregroundStyle(.secondary)
                             Button(settings.text("Выбрать фотографии…", "Choose photos…")) { isImporterPresented = true }
                                 .buttonStyle(.borderedProminent)
@@ -78,24 +81,39 @@ struct MosaicView: View {
             if case .success(let urls) = result { model.loadImages(from: urls) }
         }
         .onDrop(of: DropImageLoader.acceptedTypes, isTargeted: $model.isDropTargeted) { providers in
-            for provider in providers {
-                DropImageLoader.load(from: provider) { result in
-                    Task { @MainActor in
-                        switch result {
-                        case .success(let payload):
+            loadImages(from: providers, isPaste: false)
+            return true
+        }
+        .onPasteCommand(of: DropImageLoader.acceptedTypes) { providers in
+            loadImages(from: providers, isPaste: true)
+        }
+        .onChange(of: settings.language) { _ in model.refreshLanguage() }
+    }
+
+    private func loadImages(from providers: [NSItemProvider], isPaste: Bool) {
+        for provider in providers {
+            DropImageLoader.load(from: provider) { result in
+                Task { @MainActor in
+                    switch result {
+                    case .success(let payload):
+                        if isPaste {
+                            model.addPastedImage(
+                                data: payload.data,
+                                suggestedName: payload.suggestedName
+                            )
+                        } else {
                             model.addDroppedImage(
                                 data: payload.data,
                                 suggestedName: payload.suggestedName
                             )
-                        case .failure(let error):
-                            model.statusMessage = error.localizedDescription
                         }
+                    case .failure(let error):
+                        model.statusMessage = error.localizedDescription
+                        NSSound.beep()
                     }
                 }
             }
-            return true
         }
-        .onChange(of: settings.language) { _ in model.refreshLanguage() }
     }
 
     private var settingsPanel: some View {

@@ -66,20 +66,32 @@ private struct SinglePhotoEditorView: View {
         }
         .onDrop(of: DropImageLoader.acceptedTypes, isTargeted: $model.isDropTargeted) { providers in
             guard let provider = providers.first else { return false }
-            DropImageLoader.load(from: provider) { result in
-                Task { @MainActor in
-                    switch result {
-                    case .success(let payload):
-                        model.loadImage(data: payload.data, suggestedName: payload.suggestedName)
-                    case .failure(let error):
-                        model.statusMessage = error.localizedDescription
-                        NSSound.beep()
-                    }
-                }
-            }
+            loadImage(from: provider, isPaste: false)
             return true
         }
+        .onPasteCommand(of: DropImageLoader.acceptedTypes) { providers in
+            guard let provider = providers.first else { return }
+            loadImage(from: provider, isPaste: true)
+        }
         .onChange(of: settings.language) { _ in model.refreshLanguage() }
+    }
+
+    private func loadImage(from provider: NSItemProvider, isPaste: Bool) {
+        DropImageLoader.load(from: provider) { result in
+            Task { @MainActor in
+                switch result {
+                case .success(let payload):
+                    if isPaste {
+                        model.loadPastedImage(data: payload.data, suggestedName: payload.suggestedName)
+                    } else {
+                        model.loadImage(data: payload.data, suggestedName: payload.suggestedName)
+                    }
+                case .failure(let error):
+                    model.statusMessage = error.localizedDescription
+                    NSSound.beep()
+                }
+            }
+        }
     }
 
     private var editorArea: some View {
@@ -124,8 +136,8 @@ private struct SinglePhotoEditorView: View {
                         Text(settings.text("Перетащите фотографию", "Drop a photo"))
                             .font(.title3.weight(.semibold))
                         Text(settings.text(
-                            "или выберите JPG, PNG, HEIC, TIFF и другие изображения",
-                            "or choose a JPG, PNG, HEIC, TIFF, or another image"
+                            "или выберите файл либо вставьте изображение через ⌘V",
+                            "or choose a file or paste an image with ⌘V"
                         ))
                             .foregroundStyle(.secondary)
                         Button(settings.text("Выбрать фото…", "Choose photo…")) { isImporterPresented = true }
