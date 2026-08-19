@@ -6,20 +6,38 @@ SCRIPT_DIR="${0:A:h}"
 PROJECT_DIR="${SCRIPT_DIR:h}"
 APP_NAME="Photo_Editor"
 EXECUTABLE_NAME="PhotoPrintEditor"
-APP_VERSION="1.2"
-BUILD_NUMBER="3"
+APP_VERSION="1.3"
+BUILD_NUMBER="4"
 APP_DIR="$PROJECT_DIR/dist/$APP_NAME.app"
 MODULE_CACHE="$PROJECT_DIR/.build/ModuleCache"
 ARCHIVE_DIR="$PROJECT_DIR/Releases"
 ARCHIVE_PATH="$ARCHIVE_DIR/$APP_NAME-$APP_VERSION-macOS-arm64.zip"
+DMG_PATH="$ARCHIVE_DIR/$APP_NAME-$APP_VERSION-macOS-arm64.dmg"
 INSTALL_PATH="/Applications/$APP_NAME.app"
 TARGET="arm64-apple-macosx13.0"
 
 CREATE_ARCHIVE=false
-INSTALL_APP=false
+INSTALL_APP=true
 ASSUME_YES=false
 SELECTED_SDK=""
 CURRENT_STAGE="запуск скрипта"
+TEMP_PATHS=()
+
+cleanup_temp_paths() {
+    local temp_path
+    for temp_path in "${TEMP_PATHS[@]}"; do
+        [[ -e "$temp_path" ]] || continue
+        case "$temp_path" in
+            "$PROJECT_DIR/.build/"*|"$ARCHIVE_DIR/."*) rm -rf -- "$temp_path" ;;
+        esac
+    done
+}
+
+TRAPEXIT() {
+    if (( ZSH_SUBSHELL == 0 )); then
+        cleanup_temp_paths
+    fi
+}
 
 TRAPZERR() {
     local exit_code=$?
@@ -51,16 +69,18 @@ usage() {
   ./scripts/build-app.sh [параметры]
 
 Параметры:
-  --archive   создать ZIP в папке Releases
-  --install   установить готовое приложение в /Applications
-  --yes, -y   не спрашивать подтверждение для --install
+  --archive   дополнительно создать ZIP в папке Releases
+  --install   установить приложение в /Applications (по умолчанию)
+  --no-install  только собрать приложение и DMG, не устанавливать
+  --yes, -y   не спрашивать подтверждение установки
   --help, -h  показать эту справку
 
 Переменные окружения:
   PHOTO_EDITOR_SDK_PATH   использовать конкретный macOS SDK
 
 Примеры:
-  ./scripts/build-app.sh
+  ./scripts/build-app.sh              # приложение, DMG и установка
+  ./scripts/build-app.sh --no-install # приложение и DMG без установки
   ./scripts/build-app.sh --archive
   ./scripts/build-app.sh --archive --install
 EOF
@@ -157,6 +177,7 @@ for argument in "$@"; do
     case "$argument" in
         --archive) CREATE_ARCHIVE=true ;;
         --install) INSTALL_APP=true ;;
+        --no-install) INSTALL_APP=false ;;
         --yes|-y) ASSUME_YES=true ;;
         --help|-h) usage; exit 0 ;;
         *) die "Неизвестный параметр: $argument" "Запустите ./scripts/build-app.sh --help" ;;
@@ -177,9 +198,8 @@ require_command swift "Установите Apple Command Line Tools: xcode-sele
 require_command swiftc "Установите Apple Command Line Tools: xcode-select --install"
 require_command codesign "Переустановите или обновите Apple Command Line Tools."
 require_command file "Команда file входит в macOS. Восстановите системные утилиты или обновите macOS."
-if [[ "$CREATE_ARCHIVE" == true || "$INSTALL_APP" == true ]]; then
-    require_command ditto "Команда ditto входит в macOS. Восстановите системные утилиты или обновите macOS."
-fi
+require_command ditto "Команда ditto входит в macOS. Восстановите системные утилиты или обновите macOS."
+require_command hdiutil "Команда hdiutil входит в macOS. Восстановите системные утилиты или обновите macOS."
 if [[ "$CREATE_ARCHIVE" == true ]]; then
     require_command unzip "Команда unzip входит в macOS. Восстановите системные утилиты или обновите macOS."
 fi
@@ -228,6 +248,7 @@ BUILT_EXECUTABLE="$BIN_PATH/$EXECUTABLE_NAME"
 CURRENT_STAGE="создание пакета приложения"
 info "Создание пакета приложения"
 STAGING_ROOT="$(mktemp -d "$PROJECT_DIR/.build/app-bundle.XXXXXX")"
+TEMP_PATHS+=("$STAGING_ROOT")
 STAGING_APP="$STAGING_ROOT/$APP_NAME.app"
 mkdir -p "$STAGING_APP/Contents/MacOS" "$STAGING_APP/Contents/Resources"
 cp "$BUILT_EXECUTABLE" "$STAGING_APP/Contents/MacOS/$EXECUTABLE_NAME"
@@ -272,11 +293,36 @@ mv "$STAGING_APP" "$APP_DIR"
 rmdir "$STAGING_ROOT"
 success "Приложение создано: $APP_DIR"
 
+CURRENT_STAGE="создание DMG-образа"
+info "Создание установочного DMG-образа"
+mkdir -p "$ARCHIVE_DIR"
+DMG_STAGING="$(mktemp -d "$PROJECT_DIR/.build/dmg-root.XXXXXX")"
+TEMP_PATHS+=("$DMG_STAGING")
+ditto "$APP_DIR" "$DMG_STAGING/$APP_NAME.app"
+ln -s /Applications "$DMG_STAGING/Applications"
+TEMP_DMG="$ARCHIVE_DIR/.$APP_NAME-$APP_VERSION-$$.dmg"
+TEMP_PATHS+=("$TEMP_DMG")
+hdiutil create \
+    -volname "$APP_NAME $APP_VERSION" \
+    -srcfolder "$DMG_STAGING" \
+    -ov \
+    -format UDZO \
+    "$TEMP_DMG" >/dev/null || die \
+        "Не удалось создать DMG-образ." \
+        "Проверьте свободное место на диске и доступность системной утилиты hdiutil."
+hdiutil verify "$TEMP_DMG" >/dev/null || die \
+    "Созданный DMG-образ повреждён." \
+    "Проверьте диск и повторите сборку."
+mv -f "$TEMP_DMG" "$DMG_PATH"
+rm -rf "$DMG_STAGING"
+success "DMG создан и проверен: $DMG_PATH"
+
 if [[ "$CREATE_ARCHIVE" == true ]]; then
     CURRENT_STAGE="создание ZIP-архива"
     info "Создание ZIP-архива"
     mkdir -p "$ARCHIVE_DIR"
     TEMP_ARCHIVE="$ARCHIVE_DIR/.$APP_NAME-$APP_VERSION-$$.zip"
+    TEMP_PATHS+=("$TEMP_ARCHIVE")
     ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" "$TEMP_ARCHIVE"
     unzip -t "$TEMP_ARCHIVE" >/dev/null || die \
         "Проверка ZIP-архива завершилась ошибкой." \

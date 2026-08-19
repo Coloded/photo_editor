@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-1.2-0A84FF">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.3-0A84FF">
   <img alt="Swift" src="https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white">
   <img alt="macOS" src="https://img.shields.io/badge/macOS-13%2B-000000?logo=apple&logoColor=white">
   <img alt="Architecture" src="https://img.shields.io/badge/architecture-arm64-34C759">
@@ -18,7 +18,7 @@
 
 <p align="center">
   <a href="#english">English</a> · <a href="#русский">Русский</a> ·
-  <a href="Releases/Photo_Editor-1.2-macOS-arm64.zip">Download / Скачать</a>
+  <a href="Releases/Photo_Editor-1.3-macOS-arm64.dmg">Download DMG / Скачать DMG</a>
 </p>
 
 ---
@@ -29,9 +29,9 @@ Photo_Editor is a lightweight native macOS app for resizing photos to exact prin
 
 ## Download and installation
 
-1. Download [Photo_Editor 1.2 for Apple Silicon](Releases/Photo_Editor-1.2-macOS-arm64.zip).
-2. Extract the ZIP archive.
-3. Move `Photo_Editor.app` to `/Applications`.
+1. Download [Photo_Editor 1.3 for Apple Silicon](Releases/Photo_Editor-1.3-macOS-arm64.dmg).
+2. Open the DMG image.
+3. Drag `Photo_Editor.app` onto the **Applications** shortcut.
 4. On the first launch, right-click the app and choose **Open** if macOS displays an unidentified-developer warning.
 
 > Photo_Editor is currently ad-hoc signed and is not notarized through the Apple Developer Program.
@@ -101,22 +101,27 @@ cd photo_editor
 ./scripts/build-app.sh
 ```
 
-The release app is created at `dist/Photo_Editor.app`.
+The release app is created at `dist/Photo_Editor.app`. Every successful build also creates and verifies `Releases/Photo_Editor-1.3-macOS-arm64.dmg` with an Applications shortcut. A normal interactive build asks for confirmation and then installs the app into `/Applications`.
 
 Optional commands:
 
 ```bash
-# Build and verify a ZIP archive
+# Build a DMG and additionally create a ZIP archive
 ./scripts/build-app.sh --archive
 
-# Build and ask before installing into /Applications
-./scripts/build-app.sh --install
+# Build the app and DMG without installing (used by CI)
+./scripts/build-app.sh --no-install
+
+# Install without an additional confirmation prompt
+./scripts/build-app.sh --yes
 
 # Show all options
 ./scripts/build-app.sh --help
 ```
 
 The script never installs developer components silently. When a required Apple component cannot be installed automatically, it names the missing component and explains what the user needs to install.
+
+GitHub Actions runs the same script on every update to `main` and uploads the verified DMG as a workflow artifact. For version tags, the workflow also creates a GitHub Release and attaches the DMG.
 
 ## Privacy
 
@@ -130,9 +135,9 @@ Photo_Editor — лёгкое нативное приложение для macOS
 
 ## Скачивание и установка
 
-1. Скачайте [Photo_Editor 1.2 для Apple Silicon](Releases/Photo_Editor-1.2-macOS-arm64.zip).
-2. Распакуйте ZIP-архив.
-3. Переместите `Photo_Editor.app` в папку `/Applications` («Программы»).
+1. Скачайте [Photo_Editor 1.3 для Apple Silicon](Releases/Photo_Editor-1.3-macOS-arm64.dmg).
+2. Откройте образ DMG.
+3. Перетащите `Photo_Editor.app` на ярлык **Applications** («Программы»).
 4. При первом запуске нажмите на приложение правой кнопкой мыши и выберите **Открыть**, если macOS покажет предупреждение о неизвестном разработчике.
 
 > Сейчас приложение имеет локальную ad-hoc подпись и не проходило нотариальное заверение Apple Developer Program.
@@ -202,22 +207,27 @@ cd photo_editor
 ./scripts/build-app.sh
 ```
 
-Готовое приложение появится в `dist/Photo_Editor.app`.
+Готовое приложение появится в `dist/Photo_Editor.app`. После каждой успешной сборки скрипт также создаёт и проверяет образ `Releases/Photo_Editor-1.3-macOS-arm64.dmg` с ярлыком папки Applications. При обычном интерактивном запуске скрипт запросит подтверждение и установит приложение в `/Applications`.
 
 Дополнительные команды:
 
 ```bash
-# Собрать и проверить ZIP-архив
+# Собрать DMG и дополнительно создать ZIP-архив
 ./scripts/build-app.sh --archive
 
-# Собрать и запросить подтверждение установки в /Applications
-./scripts/build-app.sh --install
+# Собрать приложение и DMG без установки (режим CI)
+./scripts/build-app.sh --no-install
+
+# Установить без дополнительного вопроса
+./scripts/build-app.sh --yes
 
 # Показать справку
 ./scripts/build-app.sh --help
 ```
 
 Скрипт никогда не устанавливает компоненты разработчика скрытно. Если автоматическая установка невозможна, он пишет, чего именно не хватает и что пользователь должен установить.
+
+GitHub Actions запускает этот же скрипт при каждом обновлении ветки `main` и сохраняет проверенный DMG как артефакт сборки. Для тегов версий workflow также создаёт GitHub Release и прикрепляет к нему DMG.
 
 ## Конфиденциальность
 
@@ -230,7 +240,7 @@ photo_editor/
 ├── Sources/PhotoPrintEditor/   Swift and SwiftUI source code
 ├── Resources/                  Application icon resources
 ├── docs/screenshots/           README screenshots
-├── Releases/                   Compiled Apple Silicon ZIP
+├── Releases/                   Compiled Apple Silicon DMG and optional ZIP
 ├── scripts/build-app.sh        Release bundle builder
 ├── Package.swift               Swift Package Manager manifest
 └── README.md                   English and Russian documentation

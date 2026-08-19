@@ -72,8 +72,8 @@ enum AboutPanel {
         )
         NSApplication.shared.orderFrontStandardAboutPanel(options: [
             .applicationName: "Photo_Editor",
-            .applicationVersion: "1.2",
-            .version: language == .ru ? "Версия 1.2" : "Version 1.2",
+            .applicationVersion: "1.3",
+            .version: language == .ru ? "Версия 1.3" : "Version 1.3",
             .credits: credits
         ])
         NSApplication.shared.activate(ignoringOtherApps: true)

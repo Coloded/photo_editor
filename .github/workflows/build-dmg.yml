@@ -1,0 +1,46 @@
+name: Build Apple Silicon DMG
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-dmg:
+    name: Build ARM64 application and DMG
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v6
+
+      - name: Build and verify DMG
+        run: ./scripts/build-app.sh --no-install
+
+      - name: Show DMG checksum
+        run: shasum -a 256 Releases/Photo_Editor-*-macOS-arm64.dmg
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Photo_Editor-macOS-arm64-DMG
+          path: Releases/Photo_Editor-*-macOS-arm64.dmg
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish tagged GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "${GITHUB_REF_NAME}"
+          Releases/Photo_Editor-*-macOS-arm64.dmg
+          --verify-tag
+          --generate-notes
+          --title "Photo_Editor ${GITHUB_REF_NAME#v}"

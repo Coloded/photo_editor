@@ -1,5 +1,23 @@
 # Changelog / История изменений
 
+## 1.3 — 2026-08-19
+
+### English
+
+- The build script now creates and verifies an installable DMG by default.
+- The DMG contains Photo_Editor and an Applications folder shortcut.
+- Added GitHub Actions automation for ARM64 DMG artifacts and tagged releases.
+- ZIP creation remains available as the optional `--archive` output.
+- Local builds install the app into `/Applications` after confirmation; CI uses `--no-install`.
+
+### Русский
+
+- Скрипт сборки теперь по умолчанию создаёт и проверяет установочный DMG.
+- В DMG находятся Photo_Editor и ярлык папки Applications.
+- Добавлена автоматическая сборка ARM64-DMG и релизов через GitHub Actions.
+- Создание ZIP оставлено дополнительным параметром `--archive`.
+- Локальная сборка после подтверждения устанавливает приложение в `/Applications`; для CI предусмотрен `--no-install`.
+
 ## 1.2 — 2026-08-19
 
 ### English
