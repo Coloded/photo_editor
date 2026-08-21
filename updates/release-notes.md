@@ -1,17 +1,15 @@
-# Photo_Editor 1.4
+# Photo_Editor 1.4.1
 
 ## English
 
-- Added secure in-app updates powered by Sparkle 2.9.2.
-- Added **Check for Updates…** to the application menu and the About window.
-- Added optional automatic checks for stable updates hosted on GitHub.
-- Update archives and the appcast feed are protected with EdDSA signatures.
-- The update interface follows the saved Russian or English application language.
+- Fixed an application launch failure on clean Apple Silicon Macs.
+- Sparkle is now loaded from the framework embedded inside the application bundle.
+- Added a release-build check that prevents this packaging problem from recurring.
+- Photo_Editor remains a native ARM64 app for macOS 13 and later.
 
 ## Русский
 
-- Добавлено безопасное обновление внутри приложения на основе Sparkle 2.9.2.
-- Команда **«Проверить обновления…»** добавлена в меню приложения и окно «О программе».
-- Добавлена автоматическая проверка стабильных обновлений на GitHub.
-- Архивы обновлений и лента appcast защищены подписями EdDSA.
-- Интерфейс обновления следует сохранённому русскому или английскому языку приложения.
+- Исправлен сбой запуска приложения на чистых Mac с Apple Silicon.
+- Sparkle теперь загружается из framework, встроенного непосредственно в приложение.
+- Добавлена проверка релизной сборки, исключающая повторение этой ошибки упаковки.
+- Photo_Editor остаётся нативным ARM64-приложением для macOS 13 и новее.

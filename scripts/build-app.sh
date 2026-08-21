@@ -6,8 +6,8 @@ SCRIPT_DIR="${0:A:h}"
 PROJECT_DIR="${SCRIPT_DIR:h}"
 APP_NAME="Photo_Editor"
 EXECUTABLE_NAME="PhotoPrintEditor"
-APP_VERSION="1.4"
-BUILD_NUMBER="5"
+APP_VERSION="1.4.1"
+BUILD_NUMBER="6"
 APP_DIR="$PROJECT_DIR/dist/$APP_NAME.app"
 MODULE_CACHE="$PROJECT_DIR/.build/ModuleCache"
 ARCHIVE_DIR="$PROJECT_DIR/Releases"
@@ -200,6 +200,8 @@ require_command codesign "Переустановите или обновите A
 require_command file "Команда file входит в macOS. Восстановите системные утилиты или обновите macOS."
 require_command ditto "Команда ditto входит в macOS. Восстановите системные утилиты или обновите macOS."
 require_command hdiutil "Команда hdiutil входит в macOS. Восстановите системные утилиты или обновите macOS."
+require_command install_name_tool "Команда install_name_tool входит в Apple Command Line Tools. Переустановите или обновите их."
+require_command otool "Команда otool входит в Apple Command Line Tools. Переустановите или обновите их."
 if [[ "$CREATE_ARCHIVE" == true ]]; then
     require_command unzip "Команда unzip входит в macOS. Восстановите системные утилиты или обновите macOS."
 fi
@@ -258,6 +260,20 @@ cp "$PROJECT_DIR/Resources/AppIcon.icns" "$STAGING_APP/Contents/Resources/AppIco
     "После сборки не найден Sparkle.framework." \
     "Проверьте доступ к GitHub и выполните swift package resolve."
 ditto "$SPARKLE_FRAMEWORK" "$STAGING_APP/Contents/Frameworks/Sparkle.framework"
+
+# SwiftPM links Sparkle through @rpath, but its standalone executable does not
+# automatically inherit the conventional application-bundle Frameworks path.
+# Embed it explicitly so the app launches on clean Macs without developer tools.
+if ! otool -l "$STAGING_APP/Contents/MacOS/$EXECUTABLE_NAME" | grep -Fq "path @executable_path/../Frameworks"; then
+    install_name_tool -add_rpath "@executable_path/../Frameworks" \
+        "$STAGING_APP/Contents/MacOS/$EXECUTABLE_NAME" || die \
+        "Не удалось добавить путь загрузки встроенных framework." \
+        "Проверьте Apple Command Line Tools и повторите сборку."
+fi
+otool -l "$STAGING_APP/Contents/MacOS/$EXECUTABLE_NAME" | \
+    grep -Fq "path @executable_path/../Frameworks" || die \
+    "В приложении отсутствует путь Contents/Frameworks." \
+    "Сборка остановлена, чтобы не публиковать приложение, которое не запускается на чистом Mac."
 
 INFO_PLIST="$STAGING_APP/Contents/Info.plist"
 /usr/bin/plutil -create xml1 "$INFO_PLIST"

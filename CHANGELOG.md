@@ -1,5 +1,21 @@
 # Changelog / История изменений
 
+## 1.4.1 — 2026-08-21
+
+### English
+
+- Fixed launch failure on clean Apple Silicon Macs caused by a missing embedded-framework runtime path.
+- Added the standard `@executable_path/../Frameworks` runtime search path for Sparkle.
+- Added a mandatory build check that prevents publishing an app without the embedded-framework path.
+- Confirmed the target remains native ARM64 for macOS 13 and later, including current Apple Silicon Macs and macOS releases.
+
+### Русский
+
+- Исправлен сбой запуска на чистых Mac с Apple Silicon из-за отсутствующего пути загрузки встроенного framework.
+- Для Sparkle добавлен стандартный путь `@executable_path/../Frameworks`.
+- В сборочный скрипт добавлена обязательная проверка, не позволяющая опубликовать приложение без этого пути.
+- Подтверждена нативная ARM64-совместимость с macOS 13 и новее, включая актуальные Mac с Apple Silicon и версии macOS.
+
 ## 1.4 — 2026-08-21
 
 ### English
