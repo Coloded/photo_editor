@@ -6,8 +6,8 @@ SCRIPT_DIR="${0:A:h}"
 PROJECT_DIR="${SCRIPT_DIR:h}"
 APP_NAME="Photo_Editor"
 EXECUTABLE_NAME="PhotoPrintEditor"
-APP_VERSION="1.3"
-BUILD_NUMBER="4"
+APP_VERSION="1.4"
+BUILD_NUMBER="5"
 APP_DIR="$PROJECT_DIR/dist/$APP_NAME.app"
 MODULE_CACHE="$PROJECT_DIR/.build/ModuleCache"
 ARCHIVE_DIR="$PROJECT_DIR/Releases"
@@ -216,6 +216,7 @@ fi
 [[ -f "$PROJECT_DIR/Resources/AppIcon.icns" ]] || die \
     "Не найдена иконка Resources/AppIcon.icns." \
     "Восстановите файл из репозитория."
+SPARKLE_FRAMEWORK="$PROJECT_DIR/.build/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework"
 
 if [[ "$(uname -m)" != "arm64" ]]; then
     warn "Сборка выполняется не на Apple Silicon. Будет создан ARM64-файл, но запустить его на этом Mac нельзя."
@@ -250,9 +251,13 @@ info "Создание пакета приложения"
 STAGING_ROOT="$(mktemp -d "$PROJECT_DIR/.build/app-bundle.XXXXXX")"
 TEMP_PATHS+=("$STAGING_ROOT")
 STAGING_APP="$STAGING_ROOT/$APP_NAME.app"
-mkdir -p "$STAGING_APP/Contents/MacOS" "$STAGING_APP/Contents/Resources"
+mkdir -p "$STAGING_APP/Contents/MacOS" "$STAGING_APP/Contents/Resources" "$STAGING_APP/Contents/Frameworks"
 cp "$BUILT_EXECUTABLE" "$STAGING_APP/Contents/MacOS/$EXECUTABLE_NAME"
 cp "$PROJECT_DIR/Resources/AppIcon.icns" "$STAGING_APP/Contents/Resources/AppIcon.icns"
+[[ -d "$SPARKLE_FRAMEWORK" ]] || die \
+    "После сборки не найден Sparkle.framework." \
+    "Проверьте доступ к GitHub и выполните swift package resolve."
+ditto "$SPARKLE_FRAMEWORK" "$STAGING_APP/Contents/Frameworks/Sparkle.framework"
 
 INFO_PLIST="$STAGING_APP/Contents/Info.plist"
 /usr/bin/plutil -create xml1 "$INFO_PLIST"
@@ -272,6 +277,13 @@ INFO_PLIST="$STAGING_APP/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Add :LSRequiresNativeExecution bool true" "$INFO_PLIST"
 /usr/libexec/PlistBuddy -c "Add :NSHighResolutionCapable bool true" "$INFO_PLIST"
 /usr/libexec/PlistBuddy -c "Add :NSPrincipalClass string NSApplication" "$INFO_PLIST"
+/usr/libexec/PlistBuddy -c "Add :SUFeedURL string https://github.com/Coloded/photo_editor/releases/latest/download/appcast.xml" "$INFO_PLIST"
+/usr/libexec/PlistBuddy -c "Add :SUPublicEDKey string ropoWqly4lY5ugC6KFxGAs6bLXi/ISF6Cnlh0eKwSX8=" "$INFO_PLIST"
+/usr/libexec/PlistBuddy -c "Add :SURequireSignedFeed bool true" "$INFO_PLIST"
+/usr/libexec/PlistBuddy -c "Add :SUEnableAutomaticChecks bool true" "$INFO_PLIST"
+/usr/libexec/PlistBuddy -c "Add :SUAllowsAutomaticUpdates bool true" "$INFO_PLIST"
+/usr/libexec/PlistBuddy -c "Add :SUScheduledCheckInterval integer 86400" "$INFO_PLIST"
+/usr/libexec/PlistBuddy -c "Add :SUShowReleaseNotes bool true" "$INFO_PLIST"
 
 chmod +x "$STAGING_APP/Contents/MacOS/$EXECUTABLE_NAME"
 EXECUTABLE_INFO="$(file "$STAGING_APP/Contents/MacOS/$EXECUTABLE_NAME")"
@@ -279,6 +291,9 @@ EXECUTABLE_INFO="$(file "$STAGING_APP/Contents/MacOS/$EXECUTABLE_NAME")"
     "Создан исполняемый файл неправильной архитектуры: $EXECUTABLE_INFO" \
     "Проверьте Swift toolchain и целевую архитектуру."
 
+codesign --force --deep --sign - "$STAGING_APP/Contents/Frameworks/Sparkle.framework" || die \
+    "Не удалось подписать Sparkle.framework локальной подписью." \
+    "Проверьте установленный комплект Apple Command Line Tools и права на каталог проекта."
 codesign --force --deep --sign - "$STAGING_APP" || die \
     "Не удалось подписать приложение локальной подписью." \
     "Проверьте установленный комплект Apple Command Line Tools и права на каталог проекта."

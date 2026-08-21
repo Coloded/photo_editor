@@ -1,0 +1,38 @@
+<?xml version="1.0" standalone="yes"?><!-- sparkle-sign-warning:
+IMPORTANT: This file was signed by Sparkle. Any modifications to this file requires re-signing this file with generate_appcast or sign_update! The signed signature will be embedded at the end of this file.
+--><rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Photo_Editor</title>
+        <item>
+            <title>1.4</title>
+            <pubDate>Fri, 21 Aug 2026 14:36:50 +0300</pubDate>
+            <link>https://github.com/Coloded/photo_editor</link>
+            <sparkle:version>5</sparkle:version>
+            <sparkle:shortVersionString>1.4</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description sparkle:format="markdown"><![CDATA[# Photo_Editor 1.4
+
+## English
+
+- Added secure in-app updates powered by Sparkle 2.9.2.
+- Added **Check for Updates…** to the application menu and the About window.
+- Added optional automatic checks for stable updates hosted on GitHub.
+- Update archives and the appcast feed are protected with EdDSA signatures.
+- The update interface follows the saved Russian or English application language.
+
+## Русский
+
+- Добавлено безопасное обновление внутри приложения на основе Sparkle 2.9.2.
+- Команда **«Проверить обновления…»** добавлена в меню приложения и окно «О программе».
+- Добавлена автоматическая проверка стабильных обновлений на GitHub.
+- Архивы обновлений и лента appcast защищены подписями EdDSA.
+- Интерфейс обновления следует сохранённому русскому или английскому языку приложения.
+]]></description>
+            <enclosure url="https://github.com/Coloded/photo_editor/releases/latest/download/Photo_Editor-stable.dmg" length="2896071" type="application/octet-stream" sparkle:edSignature="zBDqApHdv/zyj659AjgTbLGcKzhOUOXBQkuIQg3VQbApodXRmoa6trEJ1t3rOieswAxyN1Q+8SEbwwCqVNwECw=="></enclosure>
+        </item>
+    </channel>
+</rss><!-- sparkle-signatures:
+edSignature: gETPyqyT25COqXaRCaRI4EvodSpucFTi/EAvoonH0A/XkaMaTvhmkv63zWQpYKeAESD9IdL9uxdnWo08zNKpAA==
+length: 2361
+-->

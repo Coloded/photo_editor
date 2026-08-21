@@ -1,5 +1,25 @@
 # Changelog / История изменений
 
+## 1.4 — 2026-08-21
+
+### English
+
+- Added secure in-app updates with Sparkle 2.9.2.
+- Added a bilingual custom About window with update controls.
+- Added manual and automatic stable update checks.
+- Added EdDSA signing for update archives and the appcast feed.
+- Added a permanent `releases/latest/download/Photo_Editor-stable.dmg` download URL.
+- The saved RU/EN language is applied to the About and update interface.
+
+### Русский
+
+- Добавлено безопасное самообновление через Sparkle 2.9.2.
+- Добавлено двуязычное окно «О программе» с управлением обновлениями.
+- Добавлена ручная и автоматическая проверка стабильных обновлений.
+- Добавлена EdDSA-подпись образов обновлений и ленты appcast.
+- Добавлена постоянная ссылка `releases/latest/download/Photo_Editor-stable.dmg`.
+- Сохранённый язык RU/EN применяется в окне «О программе» и интерфейсе обновлений.
+
 ## 1.3 — 2026-08-19
 
 ### English

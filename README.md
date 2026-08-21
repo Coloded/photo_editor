@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-1.3-0A84FF">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.4-0A84FF">
   <img alt="Swift" src="https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white">
   <img alt="macOS" src="https://img.shields.io/badge/macOS-13%2B-000000?logo=apple&logoColor=white">
   <img alt="Architecture" src="https://img.shields.io/badge/architecture-arm64-34C759">
@@ -18,7 +18,7 @@
 
 <p align="center">
   <a href="#english">English</a> · <a href="#русский">Русский</a> ·
-  <a href="Releases/Photo_Editor-1.3-macOS-arm64.dmg">Download DMG / Скачать DMG</a>
+  <a href="https://github.com/Coloded/photo_editor/releases/latest/download/Photo_Editor-stable.dmg">Download stable DMG / Скачать stable DMG</a>
 </p>
 
 ---
@@ -29,7 +29,7 @@ Photo_Editor is a lightweight native macOS app for resizing photos to exact prin
 
 ## Download and installation
 
-1. Download [Photo_Editor 1.3 for Apple Silicon](Releases/Photo_Editor-1.3-macOS-arm64.dmg).
+1. Download the [latest stable Photo_Editor DMG for Apple Silicon](https://github.com/Coloded/photo_editor/releases/latest/download/Photo_Editor-stable.dmg).
 2. Open the DMG image.
 3. Drag `Photo_Editor.app` onto the **Applications** shortcut.
 4. On the first launch, right-click the app and choose **Open** if macOS displays an unidentified-developer warning.
@@ -81,6 +81,15 @@ Photo_Editor is a lightweight native macOS app for resizing photos to exact prin
 
 The interface supports Russian and English. Use **Language / Язык** in the macOS menu bar. The selected language is stored in `UserDefaults` and restored on the next launch. On the first launch, the app follows the preferred macOS language.
 
+## Updates
+
+- Use **Photo_Editor → Check for Updates…** or the button in **About Photo_Editor**.
+- Automatic stable update checks can be enabled or disabled in the About window.
+- Updates are downloaded from GitHub Releases and installed into `/Applications` by Sparkle 2.9.2.
+- The DMG archive and appcast feed are verified with EdDSA signatures before installation.
+- The permanent stable download URL is `releases/latest/download/Photo_Editor-stable.dmg`.
+- Update controls are translated into Russian and English and follow the saved application language.
+
 ## Native Apple technologies
 
 - **SwiftUI** — native macOS interface.
@@ -90,6 +99,7 @@ The interface supports Russian and English. Use **Language / Язык** in the m
 - **PDF** — print-ready mosaic export.
 - **Uniform Type Identifiers / NSItemProvider** — Finder and Apple Photos drag and drop.
 - **UserDefaults** — persistent language preference.
+- **Sparkle 2.9.2** — signed, in-app application updates.
 
 ## Build from source
 
@@ -101,7 +111,7 @@ cd photo_editor
 ./scripts/build-app.sh
 ```
 
-The release app is created at `dist/Photo_Editor.app`. Every successful build also creates and verifies `Releases/Photo_Editor-1.3-macOS-arm64.dmg` with an Applications shortcut. A normal interactive build asks for confirmation and then installs the app into `/Applications`.
+The release app is created at `dist/Photo_Editor.app`. Every successful build also creates and verifies `Releases/Photo_Editor-1.4-macOS-arm64.dmg` with an Applications shortcut. A normal interactive build asks for confirmation and then installs the app into `/Applications`.
 
 Optional commands:
 
@@ -123,6 +133,15 @@ The script never installs developer components silently. When a required Apple c
 
 GitHub Actions runs the same script on every update to `main` and uploads the verified DMG as a workflow artifact. For version tags, the workflow also creates a GitHub Release and attaches the DMG.
 
+Before publishing a stable version, update the bilingual `updates/release-notes.md`, build the app, and create signed stable assets using the EdDSA private key stored in the local macOS Keychain:
+
+```bash
+./scripts/build-app.sh --no-install
+./scripts/prepare-update.sh
+```
+
+The private update key never enters the repository or GitHub Actions. The tagged workflow publishes the already signed `Photo_Editor-stable.dmg` and `appcast.xml`.
+
 ## Privacy
 
 Photo_Editor works locally and does not contain analytics, advertising, user accounts, or photo-upload features.
@@ -135,7 +154,7 @@ Photo_Editor — лёгкое нативное приложение для macOS
 
 ## Скачивание и установка
 
-1. Скачайте [Photo_Editor 1.3 для Apple Silicon](Releases/Photo_Editor-1.3-macOS-arm64.dmg).
+1. Скачайте [последний стабильный DMG Photo_Editor для Apple Silicon](https://github.com/Coloded/photo_editor/releases/latest/download/Photo_Editor-stable.dmg).
 2. Откройте образ DMG.
 3. Перетащите `Photo_Editor.app` на ярлык **Applications** («Программы»).
 4. При первом запуске нажмите на приложение правой кнопкой мыши и выберите **Открыть**, если macOS покажет предупреждение о неизвестном разработчике.
@@ -187,6 +206,15 @@ Photo_Editor — лёгкое нативное приложение для macOS
 
 Поддерживаются русский и английский языки. Переключатель находится в верхнем меню macOS: **Язык / Language**. Выбранный язык сохраняется через `UserDefaults` и восстанавливается при следующем запуске. При первом запуске используется предпочтительный язык macOS.
 
+## Обновления
+
+- Используйте **Photo_Editor → Проверить обновления…** или кнопку в окне **«О программе Photo_Editor»**.
+- Автоматическую проверку стабильных обновлений можно включить или выключить в окне «О программе».
+- Sparkle 2.9.2 загружает обновления из GitHub Releases и устанавливает их в `/Applications`.
+- Перед установкой DMG и лента appcast проверяются по криптографической подписи EdDSA.
+- Постоянная ссылка на стабильную версию: `releases/latest/download/Photo_Editor-stable.dmg`.
+- Элементы управления обновлением переведены на русский и английский и следуют сохранённому языку приложения.
+
 ## Используемые технологии Apple
 
 - **SwiftUI** — нативный интерфейс macOS.
@@ -196,6 +224,7 @@ Photo_Editor — лёгкое нативное приложение для macOS
 - **PDF** — создание печатных листов.
 - **Uniform Type Identifiers / NSItemProvider** — drag-and-drop из Finder и Apple «Фото».
 - **UserDefaults** — сохранение языка интерфейса.
+- **Sparkle 2.9.2** — подписанные обновления внутри приложения.
 
 ## Сборка из исходного кода
 
@@ -207,7 +236,7 @@ cd photo_editor
 ./scripts/build-app.sh
 ```
 
-Готовое приложение появится в `dist/Photo_Editor.app`. После каждой успешной сборки скрипт также создаёт и проверяет образ `Releases/Photo_Editor-1.3-macOS-arm64.dmg` с ярлыком папки Applications. При обычном интерактивном запуске скрипт запросит подтверждение и установит приложение в `/Applications`.
+Готовое приложение появится в `dist/Photo_Editor.app`. После каждой успешной сборки скрипт также создаёт и проверяет образ `Releases/Photo_Editor-1.4-macOS-arm64.dmg` с ярлыком папки Applications. При обычном интерактивном запуске скрипт запросит подтверждение и установит приложение в `/Applications`.
 
 Дополнительные команды:
 
@@ -229,6 +258,15 @@ cd photo_editor
 
 GitHub Actions запускает этот же скрипт при каждом обновлении ветки `main` и сохраняет проверенный DMG как артефакт сборки. Для тегов версий workflow также создаёт GitHub Release и прикрепляет к нему DMG.
 
+Перед публикацией стабильной версии нужно обновить двуязычный файл `updates/release-notes.md`, собрать приложение и подготовить подписанные stable-файлы ключом EdDSA из локальной связки ключей macOS:
+
+```bash
+./scripts/build-app.sh --no-install
+./scripts/prepare-update.sh
+```
+
+Приватный ключ обновлений не попадает ни в репозиторий, ни в GitHub Actions. Workflow для тега публикует уже подписанные `Photo_Editor-stable.dmg` и `appcast.xml`.
+
 ## Конфиденциальность
 
 Photo_Editor работает локально и не содержит аналитики, рекламы, учётных записей или функций загрузки фотографий в интернет.
@@ -241,7 +279,9 @@ photo_editor/
 ├── Resources/                  Application icon resources
 ├── docs/screenshots/           README screenshots
 ├── Releases/                   Compiled Apple Silicon DMG and optional ZIP
+├── updates/                    Bilingual stable release notes
 ├── scripts/build-app.sh        Release bundle builder
+├── scripts/prepare-update.sh   Signed stable update feed builder
 ├── Package.swift               Swift Package Manager manifest
 └── README.md                   English and Russian documentation
 ```

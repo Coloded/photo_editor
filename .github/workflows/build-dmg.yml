@@ -23,24 +23,40 @@ jobs:
       - name: Build and verify DMG
         run: ./scripts/build-app.sh --no-install
 
+      - name: Determine release paths
+        run: |
+          app_version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' dist/Photo_Editor.app/Contents/Info.plist)
+          echo "APP_VERSION=${app_version}" >> "$GITHUB_ENV"
+          echo "DMG_PATH=Releases/Photo_Editor-${app_version}-macOS-arm64.dmg" >> "$GITHUB_ENV"
+
       - name: Show DMG checksum
-        run: shasum -a 256 Releases/Photo_Editor-*-macOS-arm64.dmg
+        run: shasum -a 256 "$DMG_PATH"
 
       - name: Upload DMG artifact
         uses: actions/upload-artifact@v4
         with:
           name: Photo_Editor-macOS-arm64-DMG
-          path: Releases/Photo_Editor-*-macOS-arm64.dmg
+          path: ${{ env.DMG_PATH }}
           if-no-files-found: error
           retention-days: 30
+
+      - name: Verify signed stable update files
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          test -f Releases/Photo_Editor-stable.dmg
+          test -f updates/appcast.xml
+          hdiutil verify Releases/Photo_Editor-stable.dmg
+          grep -q "<sparkle:shortVersionString>${APP_VERSION}</sparkle:shortVersionString>" updates/appcast.xml
+          grep -q 'Photo_Editor-stable.dmg' updates/appcast.xml
 
       - name: Publish tagged GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >-
-          gh release create "${GITHUB_REF_NAME}"
-          Releases/Photo_Editor-*-macOS-arm64.dmg
-          --verify-tag
-          --generate-notes
-          --title "Photo_Editor ${GITHUB_REF_NAME#v}"
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            Releases/Photo_Editor-stable.dmg \
+            updates/appcast.xml \
+            --verify-tag \
+            --notes-file updates/release-notes.md \
+            --title "Photo_Editor ${GITHUB_REF_NAME#v}"
