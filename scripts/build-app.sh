@@ -6,8 +6,8 @@ SCRIPT_DIR="${0:A:h}"
 PROJECT_DIR="${SCRIPT_DIR:h}"
 APP_NAME="Photo_Editor"
 EXECUTABLE_NAME="PhotoPrintEditor"
-APP_VERSION="1.4.1"
-BUILD_NUMBER="6"
+APP_VERSION="1.4.2"
+BUILD_NUMBER="7"
 APP_DIR="$PROJECT_DIR/dist/$APP_NAME.app"
 MODULE_CACHE="$PROJECT_DIR/.build/ModuleCache"
 ARCHIVE_DIR="$PROJECT_DIR/Releases"
@@ -296,10 +296,18 @@ INFO_PLIST="$STAGING_APP/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Add :SUFeedURL string https://github.com/Coloded/photo_editor/releases/latest/download/appcast.xml" "$INFO_PLIST"
 /usr/libexec/PlistBuddy -c "Add :SUPublicEDKey string ropoWqly4lY5ugC6KFxGAs6bLXi/ISF6Cnlh0eKwSX8=" "$INFO_PLIST"
 /usr/libexec/PlistBuddy -c "Add :SURequireSignedFeed bool true" "$INFO_PLIST"
+/usr/libexec/PlistBuddy -c "Add :SUVerifyUpdateBeforeExtraction bool true" "$INFO_PLIST"
 /usr/libexec/PlistBuddy -c "Add :SUEnableAutomaticChecks bool true" "$INFO_PLIST"
 /usr/libexec/PlistBuddy -c "Add :SUAllowsAutomaticUpdates bool true" "$INFO_PLIST"
 /usr/libexec/PlistBuddy -c "Add :SUScheduledCheckInterval integer 86400" "$INFO_PLIST"
 /usr/libexec/PlistBuddy -c "Add :SUShowReleaseNotes bool true" "$INFO_PLIST"
+
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :SURequireSignedFeed' "$INFO_PLIST")" == true ]] || die \
+    "Отключена проверка подписи ленты обновлений." \
+    "Не публикуйте сборку без SURequireSignedFeed."
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :SUVerifyUpdateBeforeExtraction' "$INFO_PLIST")" == true ]] || die \
+    "Не включена проверка обновления до распаковки." \
+    "Sparkle не запустится без SUVerifyUpdateBeforeExtraction при подписанной ленте."
 
 chmod +x "$STAGING_APP/Contents/MacOS/$EXECUTABLE_NAME"
 EXECUTABLE_INFO="$(file "$STAGING_APP/Contents/MacOS/$EXECUTABLE_NAME")"

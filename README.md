@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-1.4.1-0A84FF">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.4.2-0A84FF">
   <img alt="Swift" src="https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white">
   <img alt="macOS" src="https://img.shields.io/badge/macOS-13%2B-000000?logo=apple&logoColor=white">
   <img alt="Architecture" src="https://img.shields.io/badge/architecture-arm64-34C759">
@@ -111,7 +111,7 @@ cd photo_editor
 ./scripts/build-app.sh
 ```
 
-The release app is created at `dist/Photo_Editor.app`. Every successful build also creates and verifies `Releases/Photo_Editor-1.4.1-macOS-arm64.dmg` with an Applications shortcut. A normal interactive build asks for confirmation and then installs the app into `/Applications`.
+The release app is created at `dist/Photo_Editor.app`. Every successful build also creates and verifies `Releases/Photo_Editor-1.4.2-macOS-arm64.dmg` with an Applications shortcut. A normal interactive build asks for confirmation and then installs the app into `/Applications`.
 
 Optional commands:
 
@@ -236,7 +236,7 @@ cd photo_editor
 ./scripts/build-app.sh
 ```
 
-Готовое приложение появится в `dist/Photo_Editor.app`. После каждой успешной сборки скрипт также создаёт и проверяет образ `Releases/Photo_Editor-1.4.1-macOS-arm64.dmg` с ярлыком папки Applications. При обычном интерактивном запуске скрипт запросит подтверждение и установит приложение в `/Applications`.
+Готовое приложение появится в `dist/Photo_Editor.app`. После каждой успешной сборки скрипт также создаёт и проверяет образ `Releases/Photo_Editor-1.4.2-macOS-arm64.dmg` с ярлыком папки Applications. При обычном интерактивном запуске скрипт запросит подтверждение и установит приложение в `/Applications`.
 
 Дополнительные команды:
 

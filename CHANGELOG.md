@@ -1,5 +1,19 @@
 # Changelog / История изменений
 
+## 1.4.2 — 2026-08-21
+
+### English
+
+- Fixed the silent **Check for Updates…** command.
+- Enabled Sparkle's required `SUVerifyUpdateBeforeExtraction` security option for signed appcast feeds.
+- Added release-build validation for both mandatory Sparkle signature settings.
+
+### Русский
+
+- Исправлена неработавшая без сообщения команда **«Проверить обновления…»**.
+- Включён обязательный для подписанной appcast-ленты параметр безопасности Sparkle `SUVerifyUpdateBeforeExtraction`.
+- В сборку добавлена проверка обоих обязательных параметров подписи Sparkle.
+
 ## 1.4.1 — 2026-08-21
 
 ### English
