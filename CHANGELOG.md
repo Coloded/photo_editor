@@ -1,5 +1,25 @@
 # Changelog / История изменений
 
+## 1.5 — 2026-08-21
+
+### English
+
+- Reworked blur-brush rendering for large photos.
+- Interactive editing now uses a Metal-rendered preview capped at 2048 pixels while preserving the full-resolution original for export.
+- Removed full-resolution `CGImage` generation from every mouse movement.
+- Flattened each preview result to prevent an ever-growing Core Image filter graph.
+- Made blur strength resolution-independent so preview and export remain visually consistent.
+- Reduced decoded-image and intermediate-texture memory pressure without reducing exported image quality.
+
+### Русский
+
+- Переработан рендеринг кисти размытия для больших фотографий.
+- Интерактивное редактирование теперь использует Metal-предпросмотр размером не более 2048 пикселей, сохраняя полноразмерный оригинал для экспорта.
+- Убрано создание полноразмерного `CGImage` при каждом движении мыши.
+- Каждый результат предпросмотра сворачивается, поэтому цепочка Core Image больше не растёт бесконечно.
+- Интенсивность размытия теперь не зависит от разрешения, поэтому предпросмотр соответствует экспорту.
+- Снижена нагрузка на память и промежуточные Metal-текстуры без ухудшения качества сохранённого изображения.
+
 ## 1.4.2 — 2026-08-21
 
 ### English

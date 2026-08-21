@@ -164,7 +164,10 @@ final class EditorModel: ObservableObject {
     }()
     private var originalCIImage: CIImage?
     private var workingCIImage: CIImage?
+    private var previewOriginalCIImage: CIImage?
+    private var previewWorkingCIImage: CIImage?
     private var blurMarks: [BlurMark] = []
+    private let previewMaximumDimension: CGFloat = 2_048
 
     var outputPixelSize: CGSize {
         let w = max(1, Int((unit.inches(from: width) * Double(dpi)).rounded()))
@@ -281,21 +284,24 @@ final class EditorModel: ObservableObject {
         ciImage = ciImage.transformed(
             by: CGAffineTransform(translationX: -ciImage.extent.minX, y: -ciImage.extent.minY)
         )
-        guard let orientedCGImage = ciContext.createCGImage(ciImage, from: ciImage.extent) else {
+        let previewCIImage = makePreviewImage(from: ciImage)
+        guard let previewCGImage = ciContext.createCGImage(previewCIImage, from: previewCIImage.extent) else {
             statusMessage = localized("Не удалось подготовить изображение", "Could not prepare the image")
             return
         }
 
         sourceURL = displayURL
-        sourcePixelSize = CGSize(width: orientedCGImage.width, height: orientedCGImage.height)
+        sourcePixelSize = CGSize(width: ciImage.extent.width, height: ciImage.extent.height)
         originalCIImage = ciImage
         workingCIImage = ciImage
+        previewOriginalCIImage = CIImage(cgImage: previewCGImage)
+        previewWorkingCIImage = CIImage(cgImage: previewCGImage)
         blurMarks.removeAll()
         annotations.removeAll()
 
         let nsImage = NSImage(
-            cgImage: orientedCGImage,
-            size: NSSize(width: orientedCGImage.width, height: orientedCGImage.height)
+            cgImage: previewCGImage,
+            size: NSSize(width: previewCGImage.width, height: previewCGImage.height)
         )
         originalImage = nsImage
         previewImage = nsImage
@@ -303,7 +309,8 @@ final class EditorModel: ObservableObject {
     }
 
     func applyBlur(at normalizedPoint: CGPoint) {
-        guard workingCIImage != nil else { return }
+        guard let fullResolutionImage = workingCIImage,
+              let interactivePreview = previewWorkingCIImage else { return }
         let mark = BlurMark(
             normalizedPoint: CGPoint(
                 x: min(max(normalizedPoint.x, 0), 1),
@@ -312,11 +319,12 @@ final class EditorModel: ObservableObject {
             level: brushLevel
         )
         blurMarks.append(mark)
-        if let current = workingCIImage {
-            let updated = applyingBlur(mark, to: current)
-            workingCIImage = updated
-            updatePreview(from: updated)
-        }
+        // Preserve a lazy full-resolution filter graph for final export, but do
+        // interactive rendering only on the bounded preview. Rendering the
+        // source image for every mouse event can involve hundreds of MB.
+        workingCIImage = applyingBlur(mark, to: fullResolutionImage)
+        let updatedPreview = applyingBlur(mark, to: interactivePreview)
+        updateInteractivePreview(from: updatedPreview)
     }
 
     func undoBlur() {
@@ -387,21 +395,35 @@ final class EditorModel: ObservableObject {
     }
 
     private func renderBlurMarks() {
-        guard let original = originalCIImage else { return }
-        var image = original
+        guard let original = originalCIImage,
+              let previewOriginal = previewOriginalCIImage else { return }
+        var fullResolutionImage = original
+        var interactivePreview = previewOriginal
         for mark in blurMarks {
-            image = applyingBlur(mark, to: image)
+            fullResolutionImage = applyingBlur(mark, to: fullResolutionImage)
+            interactivePreview = applyingBlur(mark, to: interactivePreview)
         }
-        workingCIImage = image
-        updatePreview(from: image)
+        workingCIImage = fullResolutionImage
+        updateInteractivePreview(from: interactivePreview)
     }
 
-    private func updatePreview(from image: CIImage) {
+    private func updateInteractivePreview(from image: CIImage) {
         guard let cgImage = ciContext.createCGImage(image, from: image.extent) else { return }
+        // Flatten the rendered preview after every dab. This prevents hundreds
+        // of Core Image nodes accumulating while the brush is dragged.
+        previewWorkingCIImage = CIImage(cgImage: cgImage)
         previewImage = NSImage(
             cgImage: cgImage,
             size: NSSize(width: cgImage.width, height: cgImage.height)
         )
+    }
+
+    private func makePreviewImage(from image: CIImage) -> CIImage {
+        let extent = image.extent
+        let largestDimension = max(extent.width, extent.height)
+        guard largestDimension > previewMaximumDimension else { return image }
+        let scale = previewMaximumDimension / largestDimension
+        return image.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
     }
 
     private func applyingBlur(_ mark: BlurMark, to image: CIImage) -> CIImage {
@@ -412,7 +434,9 @@ final class EditorModel: ObservableObject {
         )
         let minSide = min(extent.width, extent.height)
         let radius = minSide * (0.012 + Double(mark.level) * 0.009)
-        let blurRadius = 1.5 + Double(mark.level) * 1.8
+        // Keep blur intensity visually consistent between the reduced preview
+        // and the full-resolution export instead of using a fixed pixel sigma.
+        let blurRadius = max(1, minSide * (0.00075 + Double(mark.level) * 0.000875))
 
         let blurred = image
             .clampedToExtent()

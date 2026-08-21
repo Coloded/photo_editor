@@ -4,31 +4,35 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <channel>
         <title>Photo_Editor</title>
         <item>
-            <title>1.4.2</title>
-            <pubDate>Fri, 21 Aug 2026 15:15:21 +0300</pubDate>
+            <title>1.5</title>
+            <pubDate>Fri, 21 Aug 2026 16:14:05 +0300</pubDate>
             <link>https://github.com/Coloded/photo_editor</link>
-            <sparkle:version>7</sparkle:version>
-            <sparkle:shortVersionString>1.4.2</sparkle:shortVersionString>
+            <sparkle:version>8</sparkle:version>
+            <sparkle:shortVersionString>1.5</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description sparkle:format="markdown"><![CDATA[# Photo_Editor 1.4.2
+            <description sparkle:format="markdown"><![CDATA[# Photo_Editor 1.5
 
 ## English
 
-- Fixed the silent **Check for Updates…** command.
-- Enabled the mandatory pre-extraction signature verification required by Sparkle for signed update feeds.
-- Added a build check that prevents publishing an invalid updater configuration.
+- Reworked the blur brush for large, high-resolution photographs.
+- Interactive brush rendering now uses a Metal preview capped at 2048 pixels.
+- The full-resolution original is preserved and used when exporting the final file.
+- Blur intensity now scales with image resolution, keeping preview and export visually consistent.
+- Reduced UI stalls, memory pressure, and growth of the Core Image filter graph while painting.
 
 ## Русский
 
-- Исправлена неработавшая без сообщения команда **«Проверить обновления…»**.
-- Включена обязательная предварительная проверка подписи, необходимая Sparkle для подписанной ленты обновлений.
-- Добавлена сборочная проверка, исключающая публикацию неправильной конфигурации updater.
+- Переработана кисть размытия для больших фотографий с высоким разрешением.
+- Во время работы кисти используется Metal-предпросмотр размером не более 2048 пикселей.
+- Полноразмерный оригинал сохраняется и применяется при экспорте итогового файла.
+- Интенсивность размытия масштабируется вместе с изображением, поэтому предпросмотр соответствует экспорту.
+- Уменьшены задержки интерфейса, расход памяти и рост цепочки фильтров Core Image.
 ]]></description>
-            <enclosure url="https://github.com/Coloded/photo_editor/releases/latest/download/Photo_Editor-stable.dmg" length="2896711" type="application/octet-stream" sparkle:edSignature="/bpx1d2ZTc8TcgNkqa+b7ajuvTcvrfpXY2wjedWion5Ei61lJdQ6Zy3WNVHKrPMlDmY0xXKtM3dZPDZpCfbuCQ=="></enclosure>
+            <enclosure url="https://github.com/Coloded/photo_editor/releases/latest/download/Photo_Editor-stable.dmg" length="2897293" type="application/octet-stream" sparkle:edSignature="g8fBxLx4Sxx/U3KOmXBpbuCApfySgbto+zoAu1/cT5hpvnYinECoJrVPXVWF5k/w4dIvDH/pPYjbD9yJp6DfBQ=="></enclosure>
         </item>
     </channel>
 </rss><!-- sparkle-signatures:
-edSignature: EXpDQt8t62Cunc7OEW/MuQc4KwY9JVDMNR+69tOKih0RZOMmJ398KCLy1ZHhzdQ49fatGl14l4JPXFAHQKXmAQ==
-length: 2074
+edSignature: vS6ytm3SVAr13nfPeXPVHk82/KcJNLYA2XLaU9B4FoCCtIyXS2rOuUbzxsjdEGKcDKNB5gzE/6fwXnAOetT4CA==
+length: 2536
 -->
